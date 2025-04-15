@@ -1,13 +1,9 @@
 import { defineStore } from 'pinia'
 
 interface UserState {
-    name: string
-    email: string
-    password: string
+    userId: string
     role: string
     token: string
-    avatar: string | null
-
     }
 
 export const useAuthStore = defineStore('user', () => {

@@ -6,6 +6,7 @@ import authV2RegisterIllustrationLight from '@images/pages/auth-v2-register-illu
 import { themeConfig } from '@themeConfig'
 import { VForm } from 'vuetify/components/VForm'
 
+import  useAuthApi from '@/composables/useAuthApi'
 import { confirmedValidator, emailValidator, passwordValidator, requiredValidator } from '@core/utils/validators'
 
 import tree2 from '@images/misc/tree2.png'
@@ -31,7 +32,9 @@ definePageMeta({
 })
 
 const credentials = ref({
-  username: '',
+  firstName: '',
+  lastName: '',
+  companyName: '',
   email: '',
   password: '',
   confirmPassword: '',
@@ -39,7 +42,9 @@ const credentials = ref({
 })
 
 const errors = ref<Record<string, string | undefined>>({
-  username: undefined,
+  firstName: undefined,
+  lastName: undefined,
+  companyName: undefined,
   email: undefined,
   password: undefined,
   confirmPassword: undefined,
@@ -48,13 +53,47 @@ const errors = ref<Record<string, string | undefined>>({
 const isPasswordVisible = ref(false)
 const refVForm = ref<VForm>()
 
+const {register: useRegister, checkEmail: useCheckEmail} = useAuthApi()
+
+const register = async () => {
+
+  try {
+  const message = await useRegister(credentials.value)
+  console.log('message', message)
+  } catch (error) {
+    // handle error
+    console.error('Registration error:', error)
+    return;
+  }
+
+  // redirect to login page or show success message
+  navigateTo( '/login')
+}
+
+const checkIfEmailExists = async () => {
+
+  try {
+    const exists = await useCheckEmail(credentials.value.email)
+    if (exists) {
+      // handle email already exists
+      errors.value.email = 'Email already exists'
+      return false
+    }
+    return true
+ } catch (error) {
+    // handle error
+    console.error('Email check error:', error)
+    return true
+  }
+}
+
+
 const onSubmit = () => {
   refVForm.value?.validate()
     .then(({ valid: isValid }) => {
-      if (isValid)
-        // login()
-        console.log('Form is valid')
-      
+      if (isValid && !checkIfEmailExists())
+        register()
+     
     })
 }
 </script>
@@ -132,15 +171,36 @@ const onSubmit = () => {
             @submit.prevent="onSubmit"
           >
             <VRow>
-              <!-- Username -->
+              <!-- firstName -->
               <VCol cols="12">
                 <VTextField
-                  v-model="credentials.username"
-                  autofocus
-                  label="Username"
-                  placeholder="Johndoe"
+                  v-model="credentials.firstName"
+                  label="First Name"
+                  placeholder="John"
                   :rules="[requiredValidator]"
-                  :error-messages="errors.username"
+                  :error-messages="errors.firstName"
+                />
+              </VCol>
+
+              <!-- lastName -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="credentials.lastName"
+                  label="Last Name"
+                  placeholder="Smith"
+                  :rules="[requiredValidator]"
+                  :error-messages="errors.lastName"
+                />
+              </VCol>
+
+              <!-- companyName -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="credentials.companyName"
+                  label="Company Name"
+                  placeholder="Company Name"
+                  :rules="[requiredValidator]"
+                  :error-messages="errors.companyName"
                 />
               </VCol>
 

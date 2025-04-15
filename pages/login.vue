@@ -4,9 +4,9 @@ import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { themeConfig } from '@themeConfig'
 import { VForm } from 'vuetify/components/VForm'
 
-import { emailValidator, passwordValidator, requiredValidator } from '@core/utils/validators'
+import { emailValidator, requiredValidator } from '@core/utils/validators'
 
-import { useLogin } from '@/api/auth'
+import useAuthApi from '@/composables/useAuthApi'
 import { useAuthStore } from '@/stores/user'
 import tree1 from '@images/misc/tree1.png'
 import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
@@ -47,61 +47,37 @@ const refVForm = ref<VForm>()
 const authStore = useAuthStore()
 
 const credentials = ref({
-  email: '',
-  password: '',
+  email: 'lemi@gmail.com',
+  password: 'lemilemi',
 })
 
 const rememberMe = ref(false)
 
 async function login() {
 
-  // stopped using nuxt-auth
-  // const response = await signIn('Credentials', {
-  //   callbackUrl: '/',
-  //   redirect: false,
-  //   ...credentials.value,
-  // })
-
-  const response = await useLogin({
+  try {
+      const response  = await useAuthApi().login({
     email: credentials.value.email,
     password: credentials.value.password,
   })
-
+    console.log('response', response)
   
-  const {data} = await response.json()
-  
-  if (!response.ok) {
-    const apiError = data as Record<string, string | undefined>
-    errors.value = apiError
-    return
-  }
-  
-  console.log('response', response)
-  console.log('data', data)
-
+    const {userId, token, role} = response
+    const userData = {
+      userId,
+      token,
+      role,
+    }
   // store the user data in the store
-  authStore.setUser(data.user)
-
-  // ge the user data from authStore
-  const userData = authStore.userData
-
-  console.log('userData', userData)
-
+  authStore.setUser(userData)
+  
   // Reset error on successful login
   errors.value = {}
-
-
-
-  // Update user abilities
-  const { user } = data
-  console.log('user', user)
-
-  // useCookie<Partial<User>>('userData').value = user
-
-  // Save user abilities in cookie so we can retrieve it back on refresh
-  // useCookie<User['abilityRules']>('userAbilityRules').value = user.abilityRules
-
-  // ability.update(user.abilityRules ?? [])
+  }
+  catch (error) {
+    console.error('Login error:', error)
+    return
+  }
 
   navigateTo(route.query.to ? String(route.query.to) : '/', { replace: true })
 }
@@ -190,7 +166,6 @@ const onSubmit = () => {
                   placeholder="johndoe@email.com"
                   :rules="[requiredValidator, emailValidator]"
                   type="email"
-                  autofocus
                   :error-messages="errors.email"
                 />
               </VCol>
@@ -202,7 +177,7 @@ const onSubmit = () => {
                   label="Password"
                   placeholder="············"
                   :type="isPasswordVisible ? 'text' : 'password'"
-                  :rules="[requiredValidator, passwordValidator]"
+                  :rules="[requiredValidator]"
                   :error-messages="errors.password"
                   :append-inner-icon="isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
