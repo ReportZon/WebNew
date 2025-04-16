@@ -6,8 +6,8 @@ import authV2RegisterIllustrationLight from '@images/pages/auth-v2-register-illu
 import { themeConfig } from '@themeConfig'
 import { VForm } from 'vuetify/components/VForm'
 
-import  useAuthApi from '@/composables/useAuthApi'
-import { confirmedValidator, emailValidator, passwordValidator, requiredValidator } from '@core/utils/validators'
+import useAuthApi from '@/composables/useAuthApi'
+import { confirmedValidator, emailValidator, requiredValidator } from '@core/utils/validators'
 
 import tree2 from '@images/misc/tree2.png'
 import authV2RegisterIllustrationBorderedDark from '@images/pages/auth-v2-register-illustration-bordered-dark.png'
@@ -32,18 +32,18 @@ definePageMeta({
 })
 
 const credentials = ref({
-  firstName: '',
-  lastName: '',
-  companyName: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
+  fName: 'lemi',
+  lName: 'dinku',
+  companyName: 'reportzon',
+  email: 'lemid@gmail.com',
+  password: 'password',
+  confirmPassword: 'password',
   privacyPolicies: false,
 })
 
 const errors = ref<Record<string, string | undefined>>({
-  firstName: undefined,
-  lastName: undefined,
+  fName: undefined,
+  lName: undefined,
   companyName: undefined,
   email: undefined,
   password: undefined,
@@ -58,7 +58,7 @@ const {register: useRegister, checkEmail: useCheckEmail} = useAuthApi()
 const register = async () => {
 
   try {
-  const message = await useRegister(credentials.value)
+  const message = await useRegister(credentials.value);
   console.log('message', message)
   } catch (error) {
     // handle error
@@ -171,25 +171,25 @@ const onSubmit = () => {
             @submit.prevent="onSubmit"
           >
             <VRow>
-              <!-- firstName -->
+              <!-- fName -->
               <VCol cols="12">
                 <VTextField
-                  v-model="credentials.firstName"
+                  v-model="credentials.fName"
                   label="First Name"
                   placeholder="John"
                   :rules="[requiredValidator]"
-                  :error-messages="errors.firstName"
+                  :error-messages="errors.fName"
                 />
               </VCol>
 
-              <!-- lastName -->
+              <!-- lName -->
               <VCol cols="12">
                 <VTextField
-                  v-model="credentials.lastName"
+                  v-model="credentials.lName"
                   label="Last Name"
                   placeholder="Smith"
                   :rules="[requiredValidator]"
-                  :error-messages="errors.lastName"
+                  :error-messages="errors.lName"
                 />
               </VCol>
 
@@ -225,7 +225,7 @@ const onSubmit = () => {
                   :type="isPasswordVisible ? 'text' : 'password'"
                   :append-inner-icon="isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
-                  :rules="[requiredValidator, passwordValidator]"
+                  :rules="[requiredValidator]"
                   :error-messages="errors.password"
                 />
               </VCol>

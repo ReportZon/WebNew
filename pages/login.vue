@@ -47,8 +47,8 @@ const refVForm = ref<VForm>()
 const authStore = useAuthStore()
 
 const credentials = ref({
-  email: 'lemi@gmail.com',
-  password: 'lemilemi',
+  email: 'empl@gmail.com',
+  password: 'password',
 })
 
 const rememberMe = ref(false)
@@ -57,9 +57,9 @@ async function login() {
 
   try {
       const response  = await useAuthApi().login({
-    email: credentials.value.email,
-    password: credentials.value.password,
-  })
+          email: credentials.value.email,
+          password: credentials.value.password,
+        })
     console.log('response', response)
   
     const {userId, token, role} = response
@@ -78,6 +78,9 @@ async function login() {
     console.error('Login error:', error)
     return
   }
+
+  const user = authStore.userData
+  console.log('userRole', user)
 
   navigateTo(route.query.to ? String(route.query.to) : '/', { replace: true })
 }

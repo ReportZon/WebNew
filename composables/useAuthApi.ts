@@ -3,8 +3,8 @@ import type { LoginResponse } from '@/types/auth'
 
 interface RegisterData {
   companyName: string
-  firstName: string
-  lastName: string
+  fName: string
+  lName: string
   email: string
   password: string
 }
@@ -20,7 +20,7 @@ const  useAuthApi = () => {
 
   const register = async (userData: RegisterData): Promise<string> => {
     try {
-      const response = await $fetch(baseURL + '/user/signup', {
+      const response = await $fetch(baseURL + '/users/signup', {
         method: 'POST',
         body: userData,
       })
@@ -34,10 +34,13 @@ const  useAuthApi = () => {
   }
 
   const checkEmail = async (email: string): Promise<boolean> => {
+
+    console.log("url", baseURL + `/users/check-email?email=${encodeURIComponent(email)}`)
     try {
-      const response = await $fetch(baseURL + `/user/signup?email=${encodeURIComponent(email)}`, {
+      const response = await $fetch(`${baseURL}/users/check-email?email=lemi@gmail.com`, {
         method: 'GET',
       })
+      console.log("response.exists", await response)
       return response.exists
     } catch (error: any) {
       throw createError({
@@ -56,7 +59,7 @@ const  useAuthApi = () => {
 
       const responseData: LoginResponse = {
         ...response,
-        role: response.companyUser.role,
+        role: response.companyUser[0].role,
       }
 
       return responseData
