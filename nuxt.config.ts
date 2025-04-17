@@ -6,8 +6,8 @@ import vuetify from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
   app: {
     head: {
-      titleTemplate: '%s - NuxtJS Admin Template',
-      title: 'Materio',
+      titleTemplate: '%s - Amazon SP Admin Dashboard',
+      title: 'Reportzon',
 
       link: [{
         rel: 'icon',
