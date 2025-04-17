@@ -1,6 +1,6 @@
 import { useAbility } from '@casl/vue'
-import type { RouteLocationNormalized } from 'vue-router'
 import type { NavGroup } from '@layouts/types'
+import type { RouteLocationNormalized } from 'vue-router'
 
 /**
  * Returns ability result if ACL is configured or else just return true
@@ -13,15 +13,18 @@ import type { NavGroup } from '@layouts/types'
  * @param {string} subject CASL Subject // https://casl.js.org/v4/en/guide/intro#basics
  */
 export const can = (action: string | undefined, subject: string | undefined) => {
-  const vm = getCurrentInstance()
+  return true  // TODO: Remove this line after implementing ACL
+  
+  // const vm = getCurrentInstance()
 
-  if (!vm)
-    return false
+  // if (!vm)
+  //   return false
 
-  const localCan = vm.proxy && '$can' in vm.proxy
+  // const localCan = vm.proxy && '$can' in vm.proxy
 
-  // @ts-expect-error We will get TS error in below line because we aren't using $can in component instance
-  return localCan ? vm.proxy?.$can(action, subject) : true
+  // // @ts-expect-error We will get TS error in below line because we aren't using $can in component instance
+  // return localCan ? vm.proxy?.$can(action, subject) : true
+  
 }
 
 /**
