@@ -150,6 +150,12 @@ onMounted(() => {
   <!-- Edit Dialog -->
   <VDialog v-model="editDialog" max-width="500px">
     <VCard title="Edit Company">
+      <!-- 👉 dialog close btn -->
+      <DialogCloseBtn
+          variant="text"
+          size="default"
+          @click="editDialog = false"
+        />
       <VCardText>
         <VTextField v-model="editedItem.name" label="Company Name" />
       </VCardText>
