@@ -68,6 +68,9 @@ async function login() {
       token,
       role,
     }
+    // save the token to cookies
+    useCookie('accessToken').value = token
+
   // store the user data in the store
   authStore.setUser(userData)
   
