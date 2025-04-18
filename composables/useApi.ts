@@ -1,14 +1,17 @@
 import { defu } from 'defu'
 import type { UseFetchOptions } from 'nuxt/app'
+import useAuthSession from '@/composables/useAuthSession'
 
 export const useApi: typeof useFetch = <T>(url: MaybeRefOrGetter<string>, options: UseFetchOptions<T> = {}) => {
   const config = useRuntimeConfig()
-  const accessToken = useCookie('accessToken')
+  const { getAccessToken } = useAuthSession()
+  const accessToken = getAccessToken()
+
 
   const defaults: UseFetchOptions<T> = {
     baseURL: config.public.apiBaseUrl,
     key: toValue(url),
-    headers: accessToken.value ? { Authorization: `Bearer ${accessToken.value}` } : {},
+    headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
   }
 
   // for nice deep defaults, please use unjs/defu
@@ -19,7 +22,8 @@ export const useApi: typeof useFetch = <T>(url: MaybeRefOrGetter<string>, option
 
 
 export function useApiFetch<T>(url: string, options: any = {}) {
-  const token = useCookie('accessToken')
+  const { getAccessToken } = useAuthSession()
+  const accessToken = getAccessToken()
   const config = useRuntimeConfig()
   
   const baseURL = config.public.apiBaseUrl
@@ -28,7 +32,7 @@ export function useApiFetch<T>(url: string, options: any = {}) {
     ...options,
     headers: {
       ...options.headers,
-      Authorization: token.value ? `Bearer ${token.value}` : undefined,
+      Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
     },
     baseURL,
   })

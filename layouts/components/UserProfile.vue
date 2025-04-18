@@ -1,19 +1,19 @@
 <script setup lang="ts">
+import useAuthSession from '@/composables/useAuthSession'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+
 
 const ability = useAbility()
 
 // TODO: Get type from backend
-const userData = useCookie<any>('userData')
 
-const { signOut } = useAuth()
+const {removeSession, getUserData} = useAuthSession()
+
+const userData  = getUserData()
 
 async function logout() {
   try {
-    await signOut({ redirect: false })
-
-    // Remove "userData" from cookie
-    userData.value = null
+    removeSession()
 
     // Reset user abilities
     ability.update([])
@@ -21,45 +21,44 @@ async function logout() {
     navigateTo({ name: 'login' })
   }
   catch (error) {
-    throw createError(error)
+    throw createError(error as Error)
   }
 }
 
 const userProfileList = [
   { type: 'divider' },
+
   {
     type: 'navItem',
-    icon: 'ri-user-line',
-    title: 'Profile',
-    to: { name: 'apps-user-view-id', params: { id: 21 } },
+    icon: 'ri-home-4-line',
+    title: 'Companies',
+    to: { name: 'companies' },
   },
+
+  { type: 'divider' },
+
   {
     type: 'navItem',
-    icon: 'ri-settings-4-line',
-    title: 'Settings',
-    to: { name: 'pages-account-settings-tab', params: { tab: 'account' } },
-  },
-  {
-    type: 'navItem',
-    icon: 'ri-file-text-line',
-    title: 'Billing Plan',
-    to: { name: 'pages-account-settings-tab', params: { tab: 'billing-plans' } },
-    badgeProps: { color: 'error', content: '4' },
+    icon: 'ri-home-4-line',
+    title: 'Companies',
+    to: { name: 'companies' },
   },
   { type: 'divider' },
-  {
-    type: 'navItem',
-    icon: 'ri-money-dollar-circle-line',
-    title: 'Pricing',
-    to: { name: 'pages-pricing' },
-  },
-  {
-    type: 'navItem',
-    icon: 'ri-question-line',
-    title: 'FAQ',
-    to: { name: 'pages-faq' },
-  },
-  { type: 'divider' },
+
+{
+  type: 'navItem',
+  icon: 'ri-home-4-line',
+  title: 'Companies',
+  to: { name: 'companies' },
+},
+{ type: 'divider' },
+
+{
+  type: 'navItem',
+  icon: 'ri-home-4-line',
+  title: 'Companies',
+  to: { name: 'companies' },
+},
 
 ]
 </script>
@@ -125,7 +124,7 @@ const userProfileList = [
 
               <div>
                 <h6 class="text-h6 font-weight-medium">
-                  {{ userData.fullName || userData.username }}
+                  {{ userData.fullName }}
                 </h6>
                 <VListItemSubtitle class="text-capitalize text-disabled">
                   {{ userData.role }}

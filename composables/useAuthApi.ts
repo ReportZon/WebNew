@@ -1,5 +1,5 @@
 import { $fetch } from 'ofetch'
-import type { LoginResponse } from '@/types/auth'
+import { UserRole, type LoginResponse } from '@/types/auth'
 
 interface RegisterData {
   companyName: string
@@ -57,9 +57,14 @@ const  useAuthApi = () => {
         body: credentials,
       })
 
+      var computedRole = response.companyUser[0].role as UserRole || UserRole.EMPLOYEE
+      if (response.globalRole)  {
+        computedRole = UserRole.SUPER_ADMIN
+      }
+
       const responseData: LoginResponse = {
         ...response,
-        role: response.companyUser[0].role,
+        role: computedRole,
       }
 
       return responseData

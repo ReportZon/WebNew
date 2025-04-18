@@ -7,8 +7,8 @@ export default defineNuxtRouteMiddleware(to => {
   if (to.meta.public)
     return
 
-  const { status } = useAuth()
-  const isLoggedIn = status.value === 'authenticated'
+  const { isLoggedIn: loggedIn } = useAuthSession()
+  const isLoggedIn = loggedIn()
 
   /*
       If user is logged in and is trying to access login like page, redirect to home

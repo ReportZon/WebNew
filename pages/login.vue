@@ -7,7 +7,7 @@ import { VForm } from 'vuetify/components/VForm'
 import { emailValidator, requiredValidator } from '@core/utils/validators'
 
 import useAuthApi from '@/composables/useAuthApi'
-import { useAuthStore } from '@/stores/user'
+import useAuthSession from '@/composables/useAuthSession'
 import tree1 from '@images/misc/tree1.png'
 import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
 import authV2LoginIllustrationBorderedLight from '@images/pages/auth-v2-login-illustration-bordered-light.png'
@@ -36,6 +36,8 @@ const isPasswordVisible = ref(false)
 
 const route = useRoute()
 
+const {setAccessToken, setUserData, getUserData, getAccessToken, getUserRole, isLoggedIn} = useAuthSession()
+
 const ability = useAbility()
 
 const errors = ref<Record<string, string | undefined>>({
@@ -44,11 +46,10 @@ const errors = ref<Record<string, string | undefined>>({
 })
 
 const refVForm = ref<VForm>()
-const authStore = useAuthStore()
 
 const credentials = ref({
-  email: 'empl@gmail.com',
-  password: 'password',
+  email: '',
+  password: '',
 })
 
 const rememberMe = ref(false)
@@ -68,12 +69,12 @@ async function login() {
       token,
       role,
     }
-    // save the token to cookies
-    useCookie('accessToken').value = token
+    // save the token to 
+    setAccessToken(token)
 
-  // store the user data in the store
-  authStore.setUser(userData)
-  
+    // store the user data in
+    setUserData(userData)
+
   // Reset error on successful login
   errors.value = {}
   }
@@ -82,8 +83,6 @@ async function login() {
     return
   }
 
-  const user = authStore.userData
-  console.log('userRole', user)
 
   navigateTo(route.query.to ? String(route.query.to) : '/', { replace: true })
 }
